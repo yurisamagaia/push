@@ -3,16 +3,17 @@ import { Platform, AlertController } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { Push, PushObject, PushOptions } from '@ionic-native/push';
-import { HTTP } from '@ionic-native/http';
+import { Http } from '@angular/http';
 
 import { HomePage } from '../pages/home/home';
+
 @Component({
   templateUrl: 'app.html'
 })
 export class MyApp {
   rootPage:any = HomePage;
 
-  constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen, private push: Push, public alertCtrl:AlertController, private http: HTTP) {
+  constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen, private push: Push, public alertCtrl:AlertController, private http: Http) {
     platform.ready().then(() => {
       statusBar.styleDefault();
       this.pushsetup();
@@ -41,36 +42,15 @@ export class MyApp {
         };
     
         const pushObject: PushObject = this.push.init(options);
-        
-        /*pushObject.on("registration").subscribe((registration: any) => {
-          console.log('registration', JSON.stringify(registration.registrationId));
-        });*/
 
         pushObject.on("registration").subscribe((registration: any) => {
           var regPush = JSON.stringify({
             'id_paciente': 44,
-            'token': registration.registrationId
+            'push_token': registration.registrationId
           });
-          //this.http.post('http://admindesenv.alldoctors.com.br/public/api/push.php', regPush, {});
-
-          this.http.get('http://admindesenv.alldoctors.com.br/public/api/push.php', regPush, {})
-          .then(data => {
-
-            console.log(data.status);
-            console.log(data.data); // data received by server
-            console.log(data.headers);
-
-          })
-          .catch(error => {
-
-            console.log(error.status);
-            console.log(error.error); // error message as string
-            console.log(error.headers);
-
-          });
-          //this.storage.set('hasPushToken', registration.registrationId);
+          this.http.post('http://admindesenv.alldoctors.com.br/public/api/push.php', regPush);
         });
-    
+
         pushObject.on('notification').subscribe((notification: any) => {
           console.log(JSON.stringify(notification));
           if (notification.additionalData.foreground) {
