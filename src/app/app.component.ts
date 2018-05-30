@@ -43,12 +43,16 @@ export class MyApp {
     
         const pushObject: PushObject = this.push.init(options);
 
-        pushObject.on("registration").subscribe((registration: any) => {
+        /*pushObject.on("registration").subscribe((registration: any) => {
           var regPush = JSON.stringify({
             'id_paciente': 44,
             'push_token': registration.registrationId
           });
           this.http.post('http://admindesenv.alldoctors.com.br/public/api/push.php', regPush);
+        });*/
+
+        pushObject.on("registration").subscribe((registration: any) => {
+          console.log('Registration ID: '+registration.registrationId);
         });
 
         pushObject.on('notification').subscribe((notification: any) => {
